@@ -1,30 +1,25 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="my" tagdir="/WEB-INF/tags"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Insert title here</title>
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
-	crossorigin="anonymous">
-</head>
+<title>중앙게시판</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-	<!-- 	<ul> -->
-	<!-- 		<li>id, title, writer</li> -->
-	<%-- 		<c:forEach items="${boardList }" var="board"> --%>
-	<%-- 			<li>${board.id }${board.title } ${board.writer }</li> --%>
-	<%-- 		</c:forEach> --%>
-	<!-- 	</ul> -->
 
-	<div class="contianer -lg">
-		<h1>게시물 목록 보기</h1>
-		<!-- 	table.table>thead>tr*4^^tbody -->
+	<my:navbar current="list" />
+
+	<my:alert></my:alert>
+
+	<div class="container-lg">
+		<h1>게시물 목록</h1>
+		<!-- table.table>thead>tr>th*4^^tbody -->
+<!-- 		새로 작성된 코드 -->
 		<table class="table">
 			<thead>
 				<tr>
@@ -38,7 +33,10 @@
 				<c:forEach items="${boardList }" var="board">
 					<tr>
 						<td>${board.id }</td>
-						<td><a href="/id/${board.id }"> ${board.title } </a></td>
+						<td><a href="/id/${board.id }"> ${board.title } </a> <c:if test="${board.fileCount > 0 }">
+								<span class="badge text-bg-info"> <i class="fa-regular fa-images"></i> ${board.fileCount }
+								</span>
+							</c:if></td>
 						<td>${board.writer }</td>
 						<td>${board.inserted }</td>
 					</tr>
@@ -47,15 +45,70 @@
 		</table>
 	</div>
 
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-		crossorigin="anonymous"></script>
+	<div class="container-lg">
+		<div class="row">
+			<nav aria-label="Page navigation example">
+				<ul class="pagination justify-content-center">
 
-	<c:if test="${param.success eq 'remove' }">
-		<script>
-			alert("게시물이 삭제되었습니다.");
-		</script>
-	</c:if>
+					<!-- 	맨처음 이동 버튼 -->
+					<c:if test="${pageInfo.currentPageNum > pageInfo.firstPageNum + 1}">
+						<li class="page-item"><c:url value="/" var="pageLink">
+								<c:param name="page" value="${pageInfo.firstPageNum }" />
+								<c:if test="${not empty param.search }">
+									<c:param name="search" value="${param.search}" />
+								</c:if>
+								<c:if test="${not empty param.type }">
+									<c:param name="type" value="${param.type }" />
+								</c:if>
+							</c:url> <a href="${pageLink }" class="page-link">
+								<i class="fa-solid fa-angles-left"></i>
+							</a></li>
+					</c:if>
+
+					<!-- 이전 버튼 -->
+					<c:if test="${pageInfo.currentPageNum gt 1 }">
+						<my:pageItem pageNum="${pageInfo.currentPageNum - 1 }">
+							<i class="fa-solid fa-angle-left"></i>
+						</my:pageItem>
+					</c:if>
+
+					<c:forEach begin="${pageInfo.leftPageNum }" end="${pageInfo.rightPageNum }" var="pageNum">
+						<my:pageItem pageNum="${pageNum }">
+							${pageNum }
+						</my:pageItem>
+					</c:forEach>
+
+					<!-- 다음 버튼 -->
+					<c:if test="${pageInfo.currentPageNum lt pageInfo.lastPageNum }">
+						<%-- 페이지 번호 : ${pageInfo.currentPageNum + 1 } --%>
+						<my:pageItem pageNum="${pageInfo.currentPageNum + 1 }">
+							<i class="fa-solid fa-angle-right"></i>
+						</my:pageItem>
+
+					</c:if>
+
+					<!-- 맨마지막 이동 버튼 -->
+					<c:if test="${pageInfo.currentPageNum < pageInfo.lastPageNum - 1 }">
+						<li class="page-item"><c:url value="/" var="pageLink">
+								<c:param name="page" value="${pageInfo.lastPageNum }"></c:param>
+								<c:if test="${not empty param.search }">
+									<c:param name="search" value="${param.search}" />
+								</c:if>
+								<c:if test="${not empty param.type }">
+									<c:param name="type" value="${param.type }" />
+								</c:if>
+							</c:url> <a href="${pageLink }" class="page-link">
+								<i class="fa-solid fa-angles-right"></i>
+							</a></li>
+					</c:if>
+
+				</ul>
+			</nav>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </body>
 </html>
+
