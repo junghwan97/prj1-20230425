@@ -17,35 +17,51 @@
 
 	<my:alert></my:alert>
 
+	<!-- toast -->
+	<div class="toast-container top-0 start-50 translate-middle-x p-3">
+		<div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="d-flex">
+				<div class="toast-body"></div>
+				<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+		</div>
+	</div>
+
 
 	<div class="container-lg">
 
 		<!-- .row.justify-content-center>.col-12.col-md-8.col-lg-6 -->
 		<div class="row justify-content-center">
 			<div class="col-12 col-md-8 col-lg-6">
-				<h1>
-				<span id="boardIdText">
-					${board.id }
-				</span>
-				번게시물</h1>
-				
-				<div>
-					
-					<h1>
-					<span id="likeIcon">
-						<i class="fa-regular fa-heart"></i>
-					</span>
-					<span id="likeNumber">
-						<%-- ${board.like } --%>
-					</span>
-					</h1>
+				<div class="d-flex">
+					<div class="me-auto">
+						<h1>
+							<span id="boardIdText"> ${board.id } </span>
+							번게시물
+						</h1>
+					</div>
+
+					<div>
+
+						<h1>
+							<span id="likeIcon">
+								<c:if test="${board.liked }">
+									<i class="fa-solid fa-heart"></i>
+								</c:if>
+
+								<c:if test="${not board.liked }">
+									<i class="fa-regular fa-heart"></i>
+								</c:if>
+							</span>
+							<span id="likeNumber"> ${board.likeCount } </span>
+						</h1>
+					</div>
 				</div>
-				
-				
+
+
 				<div>
 					<div class="mb-3">
-						<label for="" class="form-label">제목</label>
-						<input type="text" class="form-control" value="${board.title }" readonly />
+						<label for="" class="form-label">제목</label> <input type="text" class="form-control" value="${board.title }" readonly />
 					</div>
 
 					<!-- 그림 파일 출력 -->
@@ -63,12 +79,10 @@
 						<textarea class="form-control" readonly rows="10">${board.body }</textarea>
 					</div>
 					<div class="mb-3">
-						<label for="" class="form-label">작성자</label>
-						<input type="text" class="form-control" value="${board.writer }" readonly />
+						<label for="" class="form-label">작성자</label> <input type="text" class="form-control" value="${board.writer }" readonly />
 					</div>
 					<div class="mb-3">
-						<label for="" class="form-label">작성일시</label>
-						<input type="text" readonly class="form-control" value="${board.inserted }" />
+						<label for="" class="form-label">작성일시</label> <input type="text" readonly class="form-control" value="${board.inserted }" />
 					</div>
 
 					<sec:authorize access="isAuthenticated()">
